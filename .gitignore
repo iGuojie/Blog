@@ -197,4 +197,7 @@ npm-debug.log
 yarn-error.log
 
 CLAUDE.md
+.vscode
+.claude
+.gitignore
 
