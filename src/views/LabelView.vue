@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { GetBlogList, GetLabelList } from "@/api/BlogApi";
+import { GetBlogList, GetLabelList, GetBlogCount } from "@/api/BlogApi";
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BlogCardHorizontal from "@/components/BlogCardHorizontal.vue";
@@ -85,6 +85,7 @@ const pageSize = ref(6); // 每页10个（5行，每行2个）
 const totalPages = ref(1);
 const total = ref(0);
 const sectionTitle = ref(null);
+const totalBlogCount = ref(0);
 
 // 当前选中标签的名称
 const selectedLabelName = computed(() => {
@@ -95,10 +96,17 @@ const selectedLabelName = computed(() => {
   return label ? `# ${label.name}` : '文章列表';
 });
 
-// 计算所有标签的总博客数
-const totalBlogCount = computed(() => {
-  return labels.value.reduce((sum, label) => sum + (label.count || 0), 0);
-});
+// 获取文章总数
+const fetchBlogCount = async () => {
+  try {
+    const response = await GetBlogCount();
+    if (response.data.code === '666666') {
+      totalBlogCount.value = response.data.result || 0;
+    }
+  } catch (error) {
+    console.error('获取文章总数失败:', error);
+  }
+};
 
 // 获取标签列表
 const fetchLabels = async () => {
@@ -180,6 +188,7 @@ onMounted(() => {
 
   fetchLabels();
   fetchBlogs();
+  fetchBlogCount();
 });
 </script>
 
@@ -192,6 +201,7 @@ onMounted(() => {
 /* 整体布局 */
 .label-container {
   display: flex;
+  align-items: flex-start;
   gap: 32px;
   max-width: 100%;
   margin: 0;
@@ -206,6 +216,7 @@ onMounted(() => {
 .label-cloud {
   position: sticky;
   top: 80px;
+  margin-top: 60px;
   display: flex;
   flex-direction: column;
   gap: 8px;

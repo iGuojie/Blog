@@ -5,6 +5,11 @@ import CategoryView from '@/views/CategoryView.vue'
 import LabelView from '@/views/LabelView.vue'
 import SearchResultView from '@/views/SearchResultView.vue'
 import ArchiveView from '@/views/ArchiveView.vue'
+import AdminLayout from '@/admin/AdminLayout.vue'
+import AdminHome from '@/admin/views/AdminHome.vue'
+import BlogManage from '@/admin/views/BlogManage.vue'
+import CategoryManage from '@/admin/views/CategoryManage.vue'
+import LabelManage from '@/admin/views/LabelManage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +51,33 @@ const router = createRouter({
       path: '/blogDetail',
       name: 'blogDetail',
       component: BlogDetailView
+    },
+    // 管理后台路由
+    {
+      path: '/admin',
+      component: AdminLayout,
+      children: [
+        {
+          path: '',
+          name: 'admin-home',
+          component: AdminHome
+        },
+        {
+          path: 'blog',
+          name: 'admin-blog',
+          component: BlogManage
+        },
+        {
+          path: 'category',
+          name: 'admin-category',
+          component: CategoryManage
+        },
+        {
+          path: 'label',
+          name: 'admin-label',
+          component: LabelManage
+        }
+      ]
     }
   ]
 })

@@ -1,10 +1,17 @@
 <template>
   <n-message-provider>
-    <MenuComponent ref="sonRef" @activeKeyChanged="activeKeyChanged"/>
-    <div id="router">
+    <!-- 只在非管理后台页面显示前台导航和页脚 -->
+    <template v-if="!isAdminRoute">
+      <MenuComponent ref="sonRef" @activeKeyChanged="activeKeyChanged"/>
+      <div id="router">
+        <RouterView/>
+      </div>
+      <FooterComponent />
+    </template>
+    <!-- 管理后台页面不显示导航和页脚 -->
+    <template v-else>
       <RouterView/>
-    </div>
-    <FooterComponent />
+    </template>
   </n-message-provider>
 </template>
 
@@ -19,6 +26,13 @@ const activeKey = ref('home');
 const sonRef = ref(null) // 通过 ref 绑定子组件
 const router = useRouter();
 const route = useRoute();
+
+// 判断是否为管理后台路由
+const isAdminRoute = ref(false);
+
+watch(() => route.path, (newPath) => {
+  isAdminRoute.value = newPath.startsWith('/admin');
+}, { immediate: true });
 
 // 根据当前路由更新菜单状态
 function updateActiveKeyFromRoute() {
